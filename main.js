@@ -16,19 +16,64 @@ function Gameboard() {
         for (i=0; i < rows; i++) { 
 
         grid[i] = [];
-        console.log(grid);
+    
             for (let j=0; j < columns; j++) { 
                 grid[i][j] = 0;
-                console.log(grid);
+              
             }
         }
+        return grid;
+    } 
 
+    // use a nested loop to create 2d array, which will be the board game is played on. 1st array is row and 1st element in each array is 1st column. 
+
+    const logBoard = () => { 
+       const printedBoard = console.log(grid);
+
+       return printedBoard;
     }
 
-    return {createGrid};
+    const placeMarker = function(xCoord, yCoord) {
+        // checks if cell is free. 
+        // if it is places "X", if it isn't >
+        // asks for a different cell. 
+        // if (grid[xCoord][yCoord] !== 0) { 
+        //     return console.log("That spot's taken, pick a different cell to make a move.");
+        // }
+    
+         if (grid[xCoord][yCoord] === 0) { 
+            grid[xCoord][yCoord] = "X"
+
+        }
+        return logBoard();
+        
+        
+    }
+
+
+
+
+    return {createGrid, logBoard, placeMarker};
 
 }
 
 const theGrid = Gameboard();
 
 theGrid.createGrid();
+
+theGrid.logBoard();
+
+
+function Player() { 
+ 
+    let player1 = "X";
+    let player2 = "O";
+
+}
+
+
+
+function GameController() { 
+
+
+}
