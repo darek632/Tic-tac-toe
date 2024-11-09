@@ -37,11 +37,10 @@ function Gameboard() {
         // checks if cell is free. 
         // if it is places "X", if it isn't >
         // asks for a different cell. 
-        // if (grid[xCoord][yCoord] !== 0) { 
-        //     return console.log("That spot's taken, pick a different cell to make a move.");
-        // }
-    
-         if (grid[xCoord][yCoord] === 0) { 
+        if (grid[xCoord][yCoord] !== 0) { 
+            console.log("That spot's taken, pick a different cell to make a move.");
+        }
+        else if (grid[xCoord][yCoord] === 0) { 
             grid[xCoord][yCoord] = "X"
 
         }
