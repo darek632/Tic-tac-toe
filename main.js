@@ -143,8 +143,8 @@ gameplay.printNewRound();
 const checkRow = () => {
 
     sampleGrid = [
-        ["X","X","X"],
-        ["O","X","O"],
+        ["X","X","O"],
+        ["O","O","O"],
         ["X","O","X"],
     ];
 
@@ -160,7 +160,9 @@ const hasWinningRow = (row) => winningRows.includes(row);
 //callback function to use for some. takes in each element (row) in flattenedArray and returns true if this is matches a winning row,
   // either XXX or OOO. 
 
-console.log(flattenedArray.some(hasWinningRow));
+let rowResult = flattenedArray.some(hasWinningRow);
+
+console.log(rowResult);
 
 // using some to check if 1 of the flatened rows (elements) has a winning sequence, 3 Xs or 3 Os.
  
@@ -169,9 +171,9 @@ console.log(flattenedArray.some(hasWinningRow));
 const checkColumn = () => { 
 
     colGrid = [
-        ["X", "O","O"],
+        ["O", "X","O"],
+        ["O","O","X"],
         ["O","X","O"],
-        ["X","X","O"],
 
     ];
 
@@ -188,8 +190,43 @@ const checkColumn = () => {
 
     const hasWinningColumn = (column) => winningColumns.includes(column);
 
-    console.log(flattenedColumns.some(hasWinningColumn));
+    let columnResult = flattenedColumns.some(hasWinningColumn);
 
+    console.log(columnResult);
+
+}
+
+const checkDiagonal = () => { 
+
+        sampleGrid = [
+            ["O", "O","X"],
+            ["X","O","O"],
+            ["X","X","O"],
+        ];
+
+
+        let winningDiagonals = ["XXX","OOO"];
+
+    
+
+      let leftDiagonal = sampleGrid.map((row,index) =>  row[index]);
+      let rightDiagonal = sampleGrid.map((row,index) => row[sampleGrid.length-1 - index]);
+
+      let bothDiagonals = [leftDiagonal.join(""),rightDiagonal.join("")];
+      
+      console.log(bothDiagonals, bothDiagonals.length);
+
+      const hasWinningDiagonal = (diagonal) => winningDiagonals.includes(diagonal);
+
+      let diagonalResult = bothDiagonals.some(hasWinningDiagonal);
+
+      console.log(diagonalResult);
+
+      }
+
+    
+
+ 
 
 
 
@@ -228,7 +265,7 @@ const checkColumn = () => {
 
 
 
-}
+
 
 
 
