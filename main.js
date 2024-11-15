@@ -142,8 +142,6 @@ gameplay.printNewRound();
 
 const checkRow = () => {
 
-    // check rows using every
-
     sampleGrid = [
         ["X","X","X"],
         ["O","X","O"],
@@ -157,13 +155,6 @@ const checkRow = () => {
   console.log(flattenedArray,typeof(flattenedArray[0]));
   console.log(typeof(winningRows[0]));
 
-
-//    if (completeRows.includes(flattened)) { 
-//     return true;
-//    } else { 
-//     return false;
-//    }
-
 const hasWinningRow = (row) => winningRows.includes(row);
 
 //callback function to use for some. takes in each element (row) in flattenedArray and returns true if this is matches a winning row,
@@ -175,17 +166,69 @@ console.log(flattenedArray.some(hasWinningRow));
  
 }
 
+const checkColumn = () => { 
 
-    // what needs to go into player object: 
-    // each player is an object including name: 
-    // marker 
-    // whatever else that we might want to add later on 
+    colGrid = [
+        ["X", "O","O"],
+        ["O","X","O"],
+        ["X","X","O"],
+
+    ];
+
+    let winningColumns = ["XXX","OOO"];
+    let flattenedColumns = [];
+
+    for (i=0; i < colGrid.length; i++ ) { 
+        let column = colGrid.map((x) => x[i]);
+        let flatColumn = column.join("");
+        flattenedColumns[i] = flatColumn;
+    }
+
+    console.log(flattenedColumns);
+
+    const hasWinningColumn = (column) => winningColumns.includes(column);
+
+    console.log(flattenedColumns.some(hasWinningColumn));
+
+
+
+
+    // const column1 = colGrid.map((x) => x[0])
+
+    // console.log(column1);
+    // const flatColumn = column1.join("");
+
+    // console.log(flatColumn);
+    
+
+//     console.log(colGrid[0], colGrid[0][0]);
+
+//    let column1 = colGrid[0][0].concat(colGrid[1][0],colGrid[2][0]);
+
+//    console.log(column1);
+
+//    let column2 = colGrid[0][1].concat(colGrid[1][1],colGrid[2][1]);
+
+//    console.log(column2);
+
+//    let column3 = colGrid[0][2].concat(colGrid[1][2],colGrid[2][2]);
+
+//    console.log(column3);
+
+
+// what am i trying to map: 
 
 
 
 
 
 
+   
+
+
+
+
+}
 
 
 
