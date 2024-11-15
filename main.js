@@ -25,6 +25,8 @@ function Gameboard() {
         return grid;
     } 
 
+    const getGrid = () => grid;
+
     // use a nested loop to create 2d array, which will be the board game is played on. 1st array is row and 1st element in each array is 1st column. 
 
     const logBoard = () => { 
@@ -51,7 +53,7 @@ function Gameboard() {
 
 
 
-    return {createGrid, logBoard, placeMarker};
+    return {createGrid, getGrid, logBoard, placeMarker};
 
 }
 
@@ -95,15 +97,13 @@ const printNewRound = () => {
     );
 };
 
-const checkForWinner = () => {
 
-    // check rows using every
 
     // check columns using map
 
     // check diagonals manually.
 
-    
+
     // logic for checking winner goes in here: 
     // filter through the arrays? 
     // if (0,0 === 1,1 === 2,2 OR 
@@ -117,7 +117,9 @@ const checkForWinner = () => {
     // then end the game
     // print result
     // print instructions for next round
-}
+
+
+
 
 const makeMove = (xCoord,yCoord) => { 
     console.log(`${getActivePlayer().name} dropping ${getActivePlayer().marker} into ${xCoord},${yCoord}...` );
@@ -137,6 +139,41 @@ const gameplay = GameController();
 
 gameplay.printNewRound();
 
+
+const checkRow = () => {
+
+    // check rows using every
+
+    sampleGrid = [
+        ["X","X","X"],
+        ["O","X","O"],
+        ["X","O","X"],
+    ];
+
+    let winningRows = ["XXX","OOO"];
+
+  const flattenedArray = sampleGrid.map((subArray) => subArray.join(""));
+
+  console.log(flattenedArray,typeof(flattenedArray[0]));
+  console.log(typeof(winningRows[0]));
+
+
+//    if (completeRows.includes(flattened)) { 
+//     return true;
+//    } else { 
+//     return false;
+//    }
+
+const hasWinningRow = (row) => winningRows.includes(row);
+
+//callback function to use for some. takes in each element (row) in flattenedArray and returns true if this is matches a winning row,
+  // either XXX or OOO. 
+
+console.log(flattenedArray.some(hasWinningRow));
+
+// using some to check if 1 of the flatened rows (elements) has a winning sequence, 3 Xs or 3 Os.
+ 
+}
 
 
     // what needs to go into player object: 
