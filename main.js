@@ -15,21 +15,21 @@ function Gameboard() {
 
     const createGrid = function() { 
 
-        grid = [
-            ["X","O","X"],
-            [0, "X", 0],
-            ["O","X","O"],
-        ];
+        // grid = [
+        //     ["X","O","X"],
+        //     [0, "X", 0],
+        //     ["O","X","O"],
+        // ];
 
-        // for (i=0; i < rows; i++) { 
+        for (i=0; i < rows; i++) { 
 
-        // grid[i] = [];
+        grid[i] = [];
     
-        //     for (let j=0; j < columns; j++) { 
-        //         grid[i][j] = 0;
+            for (let j=0; j < columns; j++) { 
+                grid[i][j] = 0;
               
-        //     }
-        // }
+            }
+        }
 
 
         return grid;
