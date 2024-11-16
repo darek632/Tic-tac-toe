@@ -7,25 +7,39 @@ const para = document.querySelector("p");
 
 
 function Gameboard() { 
-    const grid = []; 
+    let grid = []; 
+
+    // will change to const for actual games. for testing purposes. 
     rows = 3;
     columns = 3;
 
     const createGrid = function() { 
 
-        for (i=0; i < rows; i++) { 
+        grid = [
+            ["X","O","X"],
+            [0, "X", 0],
+            ["O","X","O"],
+        ];
 
-        grid[i] = [];
+        // for (i=0; i < rows; i++) { 
+
+        // grid[i] = [];
     
-            for (let j=0; j < columns; j++) { 
-                grid[i][j] = 0;
+        //     for (let j=0; j < columns; j++) { 
+        //         grid[i][j] = 0;
               
-            }
-        }
+        //     }
+        // }
+
+
         return grid;
     } 
 
+   
+
     const getGrid = () => grid;
+
+
 
     // use a nested loop to create 2d array, which will be the board game is played on. 1st array is row and 1st element in each array is 1st column. 
 
@@ -68,8 +82,8 @@ theGrid.createGrid();
 function GameController() { 
 
 
-    let playerOneName = "Player one";
-    let playerTwoName = "Player two";
+    let playerOneName = "Player ONE";
+    let playerTwoName = "Player TWO";
  
    let players = [
     {   
@@ -97,39 +111,132 @@ const printNewRound = () => {
     );
 };
 
+const checkRow = () => {
+
+    // sampleGrid = [
+    //     ["X","X","O"],
+    //     ["O","O","O"],
+    //     ["X","O","X"],
+    // ];
+
+    let winningRows = ["XXX","OOO"];
+
+  const flattenedArray = theGrid.getGrid().map((subArray) => subArray.join(""));
+
+//   console.log(flattenedArray,typeof(flattenedArray[0]));
+//   console.log(typeof(winningRows[0]));
+
+const hasWinningRow = (row) => winningRows.includes(row);
+
+//callback function to use for some. takes in each element (row) in flattenedArray and returns true if this is matches a winning row,
+  // either XXX or OOO. 
+
+let rowResult = flattenedArray.some(hasWinningRow);
+
+return rowResult;
+// using some to check if 1 of the flatened rows (elements) has a winning sequence, 3 Xs or 3 Os.
+}
 
 
-    // check columns using map
+const checkColumn = () => { 
 
-    // check diagonals manually.
+    // colGrid = [
+    //     ["O", "X","O"],
+    //     ["O","O","X"],
+    //     ["O","X","O"],
 
+    // ];
 
-    // logic for checking winner goes in here: 
-    // filter through the arrays? 
-    // if (0,0 === 1,1 === 2,2 OR 
-    // 0,0 === 1,0 === 2,0 OR 
-    // 0,1 === 1,1 === 2,1 OR
-    // 0,2 === 1,2 === 2,2 OR 
-    // 0,2 === 1, 1 === 2,0 OR 
-    // repeat same for rows 
-    // is there a quicker way to check for this?? 
+    let winningColumns = ["XXX","OOO"];
+    let flattenedColumns = [];
 
-    // then end the game
-    // print result
-    // print instructions for next round
+    for (i=0; i < theGrid.getGrid().length; i++ ) { 
+        let column = theGrid.getGrid().map((x) => x[i]);
+        let flatColumn = column.join("");
+        flattenedColumns[i] = flatColumn;
+    }
 
+    // console.log(flattenedColumns);
 
+    const hasWinningColumn = (column) => winningColumns.includes(column);
+
+    let columnResult = flattenedColumns.some(hasWinningColumn);
+
+    return columnResult;
+
+}
+
+const checkDiagonal = () => { 
+
+    // sampleGrid = [
+    //     ["O", "O","X"],
+    //     ["X","O","O"],
+    //     ["X","X","O"],
+    // ];
+
+    let winningDiagonals = ["XXX","OOO"];
+
+  let leftDiagonal = theGrid.getGrid().map((row,index) =>  row[index]);
+  let rightDiagonal = theGrid.getGrid().map((row,index) => row[theGrid.getGrid().length-1 - index]);
+
+  let bothDiagonals = [leftDiagonal.join(""),rightDiagonal.join("")];
+  
+//   console.log(bothDiagonals, bothDiagonals.length);
+
+  const hasWinningDiagonal = (diagonal) => winningDiagonals.includes(diagonal);
+
+  let diagonalResult = bothDiagonals.some(hasWinningDiagonal);
+
+  return diagonalResult;
+
+  }
+
+  const checkBoardFull = () => { 
+
+    let flatGrid = theGrid.getGrid().flat();
+    // flattening the grid to use include, otherwise does not work with nested arrays. 
+
+//   console.log(flatGrid);
+
+  let result = flatGrid.includes(0);
+
+  return result;
+ 
+    // return theGrid.getGrid().includes(0);
+  }
+  
+
+  const checkGameResult = () => { 
+
+    checkColumn();
+    checkRow();
+    checkDiagonal();
+
+    if (checkColumn() === true || checkRow() === true || checkDiagonal() === true ) { 
+        console.log(`GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`)
+        console.log(theGrid.getGrid());
+    } else if (checkBoardFull() === false) { 
+
+        // && (checkRow() === false && checkColumn() === false && checkDiagonal() === false)
+        console.log(`It's a DRAW. No one wins. Well played. Refresh the page to play another round.`)
+        console.log(theGrid.getGrid());
+    } else {
+        switchPlayerTurn();
+        printNewRound();
+    }
+
+  }
 
 
 const makeMove = (xCoord,yCoord) => { 
     console.log(`${getActivePlayer().name} dropping ${getActivePlayer().marker} into ${xCoord},${yCoord}...` );
     theGrid.placeMarker(xCoord,yCoord);
-    switchPlayerTurn();
-
-    printNewRound();
+    checkGameResult();
+    // switchPlayerTurn();
+    // printNewRound();
 }
 
-return { printNewRound,switchPlayerTurn, getActivePlayer, printNewRound, makeMove };
+return { printNewRound,switchPlayerTurn, getActivePlayer, printNewRound, makeMove, checkRow, checkColumn, checkDiagonal,checkBoardFull,  checkGameResult };
 }
 
 const gameplay = GameController();
@@ -140,89 +247,9 @@ const gameplay = GameController();
 gameplay.printNewRound();
 
 
-const checkRow = () => {
-
-    sampleGrid = [
-        ["X","X","O"],
-        ["O","O","O"],
-        ["X","O","X"],
-    ];
-
-    let winningRows = ["XXX","OOO"];
-
-  const flattenedArray = sampleGrid.map((subArray) => subArray.join(""));
-
-  console.log(flattenedArray,typeof(flattenedArray[0]));
-  console.log(typeof(winningRows[0]));
-
-const hasWinningRow = (row) => winningRows.includes(row);
-
-//callback function to use for some. takes in each element (row) in flattenedArray and returns true if this is matches a winning row,
-  // either XXX or OOO. 
-
-let rowResult = flattenedArray.some(hasWinningRow);
-
-console.log(rowResult);
-
-// using some to check if 1 of the flatened rows (elements) has a winning sequence, 3 Xs or 3 Os.
- 
-}
-
-const checkColumn = () => { 
-
-    colGrid = [
-        ["O", "X","O"],
-        ["O","O","X"],
-        ["O","X","O"],
-
-    ];
-
-    let winningColumns = ["XXX","OOO"];
-    let flattenedColumns = [];
-
-    for (i=0; i < colGrid.length; i++ ) { 
-        let column = colGrid.map((x) => x[i]);
-        let flatColumn = column.join("");
-        flattenedColumns[i] = flatColumn;
-    }
-
-    console.log(flattenedColumns);
-
-    const hasWinningColumn = (column) => winningColumns.includes(column);
-
-    let columnResult = flattenedColumns.some(hasWinningColumn);
-
-    console.log(columnResult);
-
-}
-
-const checkDiagonal = () => { 
-
-        sampleGrid = [
-            ["O", "O","X"],
-            ["X","O","O"],
-            ["X","X","O"],
-        ];
 
 
-        let winningDiagonals = ["XXX","OOO"];
 
-    
-
-      let leftDiagonal = sampleGrid.map((row,index) =>  row[index]);
-      let rightDiagonal = sampleGrid.map((row,index) => row[sampleGrid.length-1 - index]);
-
-      let bothDiagonals = [leftDiagonal.join(""),rightDiagonal.join("")];
-      
-      console.log(bothDiagonals, bothDiagonals.length);
-
-      const hasWinningDiagonal = (diagonal) => winningDiagonals.includes(diagonal);
-
-      let diagonalResult = bothDiagonals.some(hasWinningDiagonal);
-
-      console.log(diagonalResult);
-
-      }
 
     
 
@@ -259,7 +286,24 @@ const checkDiagonal = () => {
 
 
 
+const checkBoardFull = () => { 
 
+    grid = [
+        ["X","O","X"],
+        ["X", "O", "X"],
+        ["O","X","O"],
+    ];
+
+    let flat = grid.flat();
+
+  console.log(flat);
+
+  let result = flat.includes(0);
+
+  return result;
+ 
+    // return theGrid.getGrid().includes(0);
+  }
    
 
 
