@@ -1,2 +1,29 @@
 p { border: 5px dotted black;}
 
+.cell { 
+    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid blue;
+}
+
+#container {
+    /* border: 1px solid red;  */
+    width: 60vw;
+    height: 50vh;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    grid-template-rows: repeat(3,1fr);
+}

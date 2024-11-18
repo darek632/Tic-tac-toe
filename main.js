@@ -16,9 +16,9 @@ function Gameboard() {
     const createGrid = function() { 
 
         // grid = [
-        //     ["X","O","X"],
+        //     ["O","X","X"],
         //     [0, "X", 0],
-        //     ["O","X","O"],
+        //     ["O",0,"O"],
         // ];
 
         for (i=0; i < rows; i++) { 
@@ -59,6 +59,7 @@ function Gameboard() {
         else if (grid[xCoord][yCoord] === 0) { 
             grid[xCoord][yCoord] = gameplay.getActivePlayer().marker;
 
+
         }
       
         
@@ -82,8 +83,8 @@ theGrid.createGrid();
 function GameController() { 
 
 
-    let playerOneName = "Player ONE";
-    let playerTwoName = "Player TWO";
+    let playerOneName = "Player ONE X";
+    let playerTwoName = "Player TWO O";
  
    let players = [
     {   
@@ -113,18 +114,9 @@ const printNewRound = () => {
 
 const checkRow = () => {
 
-    // sampleGrid = [
-    //     ["X","X","O"],
-    //     ["O","O","O"],
-    //     ["X","O","X"],
-    // ];
-
     let winningRows = ["XXX","OOO"];
+    const flattenedArray = theGrid.getGrid().map((subArray) => subArray.join(""));
 
-  const flattenedArray = theGrid.getGrid().map((subArray) => subArray.join(""));
-
-//   console.log(flattenedArray,typeof(flattenedArray[0]));
-//   console.log(typeof(winningRows[0]));
 
 const hasWinningRow = (row) => winningRows.includes(row);
 
@@ -140,13 +132,6 @@ return rowResult;
 
 const checkColumn = () => { 
 
-    // colGrid = [
-    //     ["O", "X","O"],
-    //     ["O","O","X"],
-    //     ["O","X","O"],
-
-    // ];
-
     let winningColumns = ["XXX","OOO"];
     let flattenedColumns = [];
 
@@ -155,8 +140,6 @@ const checkColumn = () => {
         let flatColumn = column.join("");
         flattenedColumns[i] = flatColumn;
     }
-
-    // console.log(flattenedColumns);
 
     const hasWinningColumn = (column) => winningColumns.includes(column);
 
@@ -167,12 +150,6 @@ const checkColumn = () => {
 }
 
 const checkDiagonal = () => { 
-
-    // sampleGrid = [
-    //     ["O", "O","X"],
-    //     ["X","O","O"],
-    //     ["X","X","O"],
-    // ];
 
     let winningDiagonals = ["XXX","OOO"];
 
@@ -213,17 +190,20 @@ const checkDiagonal = () => {
     checkDiagonal();
 
     if (checkColumn() === true || checkRow() === true || checkDiagonal() === true ) { 
-        console.log(`GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`)
+        let gameResult = console.log(`GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`)
         console.log(theGrid.getGrid());
+        return gameResult;
     } else if (checkBoardFull() === false) { 
 
         // && (checkRow() === false && checkColumn() === false && checkDiagonal() === false)
-        console.log(`It's a DRAW. No one wins. Well played. Refresh the page to play another round.`)
+        let gameResult = console.log(`It's a DRAW. No one wins. Well played. Refresh the page to play another round.`)
         console.log(theGrid.getGrid());
+        return gameResult;
     } else {
         switchPlayerTurn();
         printNewRound();
     }
+ 
 
   }
 
@@ -240,11 +220,100 @@ return { printNewRound,switchPlayerTurn, getActivePlayer, printNewRound, makeMov
 }
 
 const gameplay = GameController();
-
-
-// instructions for setting up the game for first move
-
 gameplay.printNewRound();
+
+
+
+const displayDOMController = () => { 
+
+   
+    let container = document.getElementById("container");
+
+    const createDisplayBoard = () => { 
+
+        for (let row=0; row < theGrid.getGrid().length; row++) { 
+            for (let column = 0; column< theGrid.getGrid()[row].length; column++) { 
+                 let cellDiv = document.createElement("div");
+                 cellDiv.setAttribute("x-coordinate",row);
+                 cellDiv.setAttribute("y-coordinate",column);
+                 cellDiv.classList.add("cell");
+                 container.appendChild(cellDiv);
+
+            }
+        }
+
+    }
+
+    const displayMoves = () => { 
+        for (let row=0; row < theGrid.getGrid().length; row++) { 
+            for (let column = 0; column< theGrid.getGrid()[row].length; column++) {
+                const value = theGrid.getGrid()[row][column];
+                const cellDiv = container.querySelector(
+                    `[x-coordinate="${row}"][y-coordinate="${column}"]`
+                );
+                // Update the text content based on the grid value
+                cellDiv.textContent = value === 0 ? "" : value;
+            }
+        }
+    
+                
+     }
+        
+    
+
+
+
+        // for (let row=0; row < theGrid.getGrid().length; row++) { 
+        //     for (let column = 0; column< theGrid.getGrid()[row].length; column++) { 
+        //          let cellDiv = document.createElement("div");
+        //          cellDiv.setAttribute("x-coordinate",row);
+        //          cellDiv.setAttribute("y-coordinate",column);
+        //          cellDiv.classList.add("cell");
+                
+        //         if (theGrid.getGrid()[row][column]=== 0) { 
+        //             cellDiv.textContent = '';
+        //         } else {
+        //             cellDiv.textContent = theGrid.getGrid()[row][column];
+        //         }
+        //         container.appendChild(cellDiv);
+                      
+        //     }
+
+        // }
+    
+
+ 
+
+    const clickMove = () => {
+
+      
+
+        container.addEventListener("click", function (event) { 
+            let cellXCoord = parseInt(event.target.getAttribute("x-coordinate"));
+            let cellYCoord = parseInt(event.target.getAttribute("y-coordinate"));
+            console.log(cellXCoord,cellYCoord);
+            gameplay.makeMove(cellXCoord,cellYCoord);
+            event.target.textContent = theGrid.getGrid()[cellXCoord][cellYCoord];
+
+            
+            
+        } )
+     }
+
+    createDisplayBoard();
+    clickMove();
+  
+
+
+    return {createDisplayBoard, clickMove }
+
+}
+
+displayDOMController();
+
+
+
+
 
 
 
@@ -286,24 +355,7 @@ gameplay.printNewRound();
 
 
 
-const checkBoardFull = () => { 
 
-    grid = [
-        ["X","O","X"],
-        ["X", "O", "X"],
-        ["O","X","O"],
-    ];
-
-    let flat = grid.flat();
-
-  console.log(flat);
-
-  let result = flat.includes(0);
-
-  return result;
- 
-    // return theGrid.getGrid().includes(0);
-  }
    
 
 
