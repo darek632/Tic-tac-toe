@@ -55,10 +55,12 @@ function Gameboard() {
         // asks for a different cell. 
         if (grid[xCoord][yCoord] !== 0) { 
             console.log("That spot's taken, pick a different cell to make a move.");
+           return false;
+        
         }
-        else if (grid[xCoord][yCoord] === 0) { 
+        else { 
             grid[xCoord][yCoord] = gameplay.getActivePlayer().marker;
-
+            return true;
 
         }
       
@@ -83,8 +85,8 @@ theGrid.createGrid();
 function GameController() { 
 
 
-    let playerOneName = "Player ONE X";
-    let playerTwoName = "Player TWO O";
+    let playerOneName = "Player ONE (X)";
+    let playerTwoName = "Player TWO (O)";
  
    let players = [
     {   
@@ -97,17 +99,22 @@ function GameController() {
     }
    ]
 
+  
+
+
 let activePlayer = players[0];
 
 const switchPlayerTurn = () => { 
     activePlayer = activePlayer === players[0] ? players[1] : players[0] 
+    console.log("turn switched");
 };
 
 const getActivePlayer = () => activePlayer;
 
 const printNewRound = () => { 
     theGrid.logBoard();
-    console.log( 
+    
+     return console.log( 
         `${getActivePlayer().name}'s turn. Make a move`
     );
 };
@@ -168,7 +175,7 @@ const checkDiagonal = () => {
 
   }
 
-  const checkBoardFull = () => { 
+  const checkBoardHasSpace = () => { 
 
     let flatGrid = theGrid.getGrid().flat();
     // flattening the grid to use include, otherwise does not work with nested arrays. 
@@ -181,43 +188,130 @@ const checkDiagonal = () => {
  
     // return theGrid.getGrid().includes(0);
   }
-  
 
-  const checkGameResult = () => { 
+//   let gameResult = "";
 
-    checkColumn();
-    checkRow();
-    checkDiagonal();
+const checkGameResult = () => { 
+    // Only call these checks once
+    if (checkRow() || checkColumn() || checkDiagonal()) {
+        const result = `GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`;
+        console.log(result);
+        return result;
+    } else if (checkBoardHasSpace()) { 
+        return null; // Game continues
+    } else {
+        const result = `It's a DRAW. No one wins. Well played. Refresh the page to play another round.`;
+        console.log(result);
+        return result;
+    }
+};
 
-    if (checkColumn() === true || checkRow() === true || checkDiagonal() === true ) { 
-        let gameResult = console.log(`GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`)
-        console.log(theGrid.getGrid());
-        return gameResult;
-    } else if (checkBoardFull() === false) { 
 
-        // && (checkRow() === false && checkColumn() === false && checkDiagonal() === false)
-        let gameResult = console.log(`It's a DRAW. No one wins. Well played. Refresh the page to play another round.`)
-        console.log(theGrid.getGrid());
-        return gameResult;
+//   const checkGameResult = () => { 
+
+//     checkColumn();
+//     checkRow();
+//     checkDiagonal();
+
+    
+
+//     if (checkColumn() === true || checkRow() === true || checkDiagonal() === true ) { 
+//       const result = `GAME OVER. ${getActivePlayer().name} wins. Please refresh the page to start again.`;
+//       console.log(result);
+//       console.log(theGrid.getGrid());
+//       return result;
+
+       
+//     } else if (checkBoardFull() === false) { 
+//         // && (checkRow() === false && checkColumn() === false && checkDiagonal() === false)
+//        const result = `It's a DRAW. No one wins. Well played. Refresh the page to play another round.`;
+//         console.log(theGrid.getGrid());
+//         console.log(result);
+//         return result;
+//     // } else if (theGrid.placeMarker() === false) { 
+//     //          console.log(`That spot's taken G. Pick another.`)
+//     //          console.log(printNewRound());
+//     } else {
+//         switchPlayerTurn();
+//         printNewRound();
+//         return null;
+//         // let gameResult = console.log("What up manss");
+//         // return gameResult;
+//     }
+   
+// }
+
+// what does checkgameresult do: 
+// each PLAYER TURN: 
+// calls check diagonal, column and row.
+//if any are true, game is WON by the ACTIVEPLAYER
+// if none are true > moves on to 
+// if board is full > result is a DRAW.
+// if neither wins or board full, only then > 
+// switch move and display board (aka continue game)
+
+
+//check Game result: 
+// check if either of the 3 wins are true. If so, assign WIN to Active player. 
+
+// gameflow: 
+// each turn/click,
+// call checkgameresult
+//
+
+
+
+// const makeMove = (xCoord,yCoord) => { 
+//     console.log(`${getActivePlayer().name} dropping ${getActivePlayer().marker} into ${xCoord},${yCoord}...` );
+//     const moveValid =  theGrid.placeMarker(xCoord,yCoord);
+
+//     if (!moveValid) { 
+//         console.log("That spot's taken my G. Pick another one");
+//         return;
+//     }
+//     // if (theGrid.getGrid()[xCoord][yCoord] !== 0) {   
+//      else { 
+       
+//         checkGameResult();
+//     }
+    
+    
+//     // switchPlayerTurn();
+//     // printNewRound();
+// }
+
+const makeMove = (xCoord, yCoord) => { 
+    console.log(`${getActivePlayer().name} dropping ${getActivePlayer().marker} into ${xCoord},${yCoord}...`);
+    const moveValid = theGrid.placeMarker(xCoord, yCoord);
+
+    if (!moveValid) { 
+        console.log("That spot's taken. Pick another one.");
+        return;
+    }
+
+    // Check the result after making a move
+    const result = checkGameResult();
+
+    if (result) {
+        displayController.displayResult(result); // Display the result in the DOM
     } else {
         switchPlayerTurn();
         printNewRound();
     }
+};
+
+
  
+return { printNewRound,switchPlayerTurn, getActivePlayer, printNewRound, makeMove , checkRow, checkColumn, checkDiagonal,checkBoardHasSpace,  checkGameResult };
 
-  }
-
-
-const makeMove = (xCoord,yCoord) => { 
-    console.log(`${getActivePlayer().name} dropping ${getActivePlayer().marker} into ${xCoord},${yCoord}...` );
-    theGrid.placeMarker(xCoord,yCoord);
-    checkGameResult();
-    // switchPlayerTurn();
-    // printNewRound();
+ 
 }
 
-return { printNewRound,switchPlayerTurn, getActivePlayer, printNewRound, makeMove, checkRow, checkColumn, checkDiagonal,checkBoardFull,  checkGameResult };
-}
+
+
+
+
+
 
 const gameplay = GameController();
 gameplay.printNewRound();
@@ -228,6 +322,12 @@ const displayDOMController = () => {
 
    
     let container = document.getElementById("container");
+    const introDiv = document.getElementById("game-instructions");
+
+    let resultDiv = document.createElement("div");
+    resultDiv.classList.add("result");
+    introDiv.appendChild(resultDiv);
+    
 
     const createDisplayBoard = () => { 
 
@@ -244,25 +344,29 @@ const displayDOMController = () => {
 
     }
 
-    const displayMoves = () => { 
-        for (let row=0; row < theGrid.getGrid().length; row++) { 
-            for (let column = 0; column< theGrid.getGrid()[row].length; column++) {
-                const value = theGrid.getGrid()[row][column];
-                const cellDiv = container.querySelector(
-                    `[x-coordinate="${row}"][y-coordinate="${column}"]`
-                );
-                // Update the text content based on the grid value
-                cellDiv.textContent = value === 0 ? "" : value;
-            }
-        }
+    // const displayMoves = () => { 
+    //     for (let row=0; row < theGrid.getGrid().length; row++) { 
+    //         for (let column = 0; column< theGrid.getGrid()[row].length; column++) {
+    //             const value = theGrid.getGrid()[row][column];
+    //             const cellDiv = container.querySelector(
+    //                 `[x-coordinate="${row}"][y-coordinate="${column}"]`
+    //             );
+    //             // Update the text content based on the grid value
+    //             cellDiv.textContent = value === 0 ? "" : value;
+    //         }
+    //     }
     
                 
+    //  }
+
+     const displayTurn = () => { 
+        
+        let turnDiv = document.getElementById("whose-turn");
+        turnDiv.textContent = `${gameplay.getActivePlayer().name}'s turn.`;
+        introDiv.appendChild(turnDiv);
      }
         
     
-
-
-
         // for (let row=0; row < theGrid.getGrid().length; row++) { 
         //     for (let column = 0; column< theGrid.getGrid()[row].length; column++) { 
         //          let cellDiv = document.createElement("div");
@@ -286,103 +390,66 @@ const displayDOMController = () => {
 
     const clickMove = () => {
 
-      
-
+    
         container.addEventListener("click", function (event) { 
             let cellXCoord = parseInt(event.target.getAttribute("x-coordinate"));
             let cellYCoord = parseInt(event.target.getAttribute("y-coordinate"));
-            console.log(cellXCoord,cellYCoord);
+            // console.log(cellXCoord,cellYCoord);
             gameplay.makeMove(cellXCoord,cellYCoord);
             event.target.textContent = theGrid.getGrid()[cellXCoord][cellYCoord];
+            displayTurn();
 
+            // const result = gameplay.checkGameResult();
+            
+
+            // const result = gameplay.checkGameResult();
+            // if (result) { 
+            //     displayResult(result);
+            // }  else { }
+            // resultIntegration();
+    
             
             
         } )
      }
 
+    const displayResult = (result) => { 
+        if (result) { 
+            resultDiv.textContent = result;
+        } else { 
+            resultDiv.textContent = "";
+        }
+
+       
+    }
+
+
+
     createDisplayBoard();
     clickMove();
-  
+    displayTurn();
+    
 
 
-    return {createDisplayBoard, clickMove }
+    return {createDisplayBoard, clickMove, displayTurn, displayResult, displayResult,  }
 
 }
 
-displayDOMController();
+const displayController = displayDOMController();
+
+// const resultIntegration = () => { 
+//     const result = gameplay.checkGameResult();
+//     console.log(result);
+//     displayDOMController().displayResult(result);
+// }
 
 
 
+// FOR FRIDAY: 
+// complete the requirements from point 6. 
+// Currently need a way to 'use' the return statement from the 'checkgameresult' to display it on screen. 
+// lots of convolution in checkgameresult more than just checking result so may need to separate somehow.
 
-
-
-
-
-
-
-    
-
- 
-
-
-
-    // const column1 = colGrid.map((x) => x[0])
-
-    // console.log(column1);
-    // const flatColumn = column1.join("");
-
-    // console.log(flatColumn);
-    
-
-//     console.log(colGrid[0], colGrid[0][0]);
-
-//    let column1 = colGrid[0][0].concat(colGrid[1][0],colGrid[2][0]);
-
-//    console.log(column1);
-
-//    let column2 = colGrid[0][1].concat(colGrid[1][1],colGrid[2][1]);
-
-//    console.log(column2);
-
-//    let column3 = colGrid[0][2].concat(colGrid[1][2],colGrid[2][2]);
-
-//    console.log(column3);
-
-
-// what am i trying to map: 
-
-
-
-
-
-
-   
-
-
-
-
-
-
-
-
-    // active player = p1 
-    // roundSwitch = if active == p1 then active = p2 
-    // else if active == p2 active = p1
-
-    // print new round { 
-    // prints board and declares whose turn it is}
-    
-
-
-    //makeMove function { 
-    // console log, dropping activePlayer token into x,y..
-    // call dropToken into x,y, using player.marker (from the player object)
-
-    // after each move, we will need to add logic to check for any 3 in a row. if so > declare winner.
-
-
-    // call roundSwitch
-    // call PrintNewRound
 
 
 

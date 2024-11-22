@@ -14,6 +14,7 @@ p { border: 5px dotted black;}
 body {
     height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     border: 1px solid blue;
@@ -26,4 +27,8 @@ body {
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(3,1fr);
+}
+
+#whose-turn, .result { 
+    font-size: 3rem;
 }
